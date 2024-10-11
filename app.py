@@ -7,8 +7,13 @@ app = Flask(__name__)
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
+# Global variable to store the last received data
+last_received_data = {}
+
 @app.route('/api/data', methods=['POST'])
 def receive_data():
+    global last_received_data  # Use the global variable
+
     # Get JSON data from request
     data = request.json
 
@@ -26,6 +31,16 @@ def receive_data():
     distance = data.get('distance', 0)
     location = data.get('location', "Unknown")
     time = data.get('time', "00:00:00")
+
+    # Store the received data in the global variable
+    last_received_data = {
+        'temperature': temperature,
+        'humidity': humidity,
+        'ldr_value': ldr_value,
+        'distance': distance,
+        'location': location,
+        'time': time
+    }
 
     # Log received data (for debugging or later use)
     logging.info(f"Received data: Temp={temperature}, Humidity={humidity}, LDR={ldr_value}, Distance={distance}, Location={location}, Time={time}")
